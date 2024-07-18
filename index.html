@@ -1,0 +1,54 @@
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <meta name="apple-mobile-web-app-capable" content="yes"/>
+    <title>Starting App...</title>
+    <script>
+
+        var URL = "example-app://~~"; //Android 起動して表示したいアプリのページ
+        var MARKET = "market://details?id=com.example";
+        var iTunes = "itms://itunes.apple.com/app/idxxxxxxx";
+        var QR = "http://example.com/qr";
+        var UniversalLink = "https://example.com/app-page"; //iOS 起動して表示したいアプリのページ
+
+        function onLoad() {
+            if (navigator.userAgent.match(/Android/)) {
+                if (navigator.userAgent.match(/Chrome/)) {
+                    setTimeout(function () {
+                        if (!document.webkitHidden)
+                            window.location.href = MARKET;
+                    }, 1000);
+                    window.location.href = URL;
+                } else {
+                    var iframe = document.createElement("iframe");
+                    iframe.style.border = "none";
+                    iframe.style.width = "1px";
+                    iframe.style.height = "1px";
+                    var t = setTimeout(function () {
+                        window.location = MARKET;
+                    }, 1000);
+                    iframe.onload = function () {
+                        clearTimeout(t)
+                    };
+                    iframe.src = URL;
+                    document.body.appendChild(iframe);
+                }
+            } else if (navigator.userAgent.match(/iPhone|iPad|iPod/)) {
+                setTimeout(function () {
+                    if (!document.webkitHidden) {
+                        window.location = iTunes;
+                    }
+                }, 25);
+                window.location = UniversalLink;
+            } else {
+                // PCで開いた場合はQRコードを表示
+                var img = document.createElement("img");
+                img.src = "https://chart.googleapis.com/chart?chs=300x300&cht=qr&chl=" + encodeURIComponent(QR);
+                document.body.appendChild(img);
+            }
+        }
+    </script>
+</head>
+<body onload="onLoad()">
+</body>
+</html>
